@@ -169,17 +169,17 @@ GALAXEA_R1_CFG = ArticulationCfg(
         ),
         "r1_eefs": ImplicitActuatorCfg(
             joint_names_expr=[".*_Link_f"],
-            effort_limit=12.0,
+            effort_limit=500.0,
             velocity_limit=2.61,
             stiffness=500.0,#80
             damping=200.0,#4
         ),
         "r1_grippers": ImplicitActuatorCfg(
             joint_names_expr=[".*_Link_[g-h]"],
-            effort_limit=200.0,
+            effort_limit=1e7.0,
             velocity_limit=0.25,
-            stiffness=500,  # 1e7,1e6
-            damping=200,  # 1e5,1e4
+            stiffness=1e7,  # 1e7,1e6
+            damping=1e5,  # 1e5,1e4
         ),
     },
     soft_joint_pos_limit_factor=1.0,
@@ -193,8 +193,8 @@ GALAXEA_R1_HIGH_PD_CFG.actuators["r1_eefs"].stiffness = 1000.0
 GALAXEA_R1_HIGH_PD_CFG.actuators["r1_eefs"].damping = 200.0
 
 GALAXEA_R1_HIGH_PD_GRIPPER_CFG = GALAXEA_R1_HIGH_PD_CFG.copy()
-GALAXEA_R1_HIGH_PD_GRIPPER_CFG.actuators["r1_grippers"].stiffness = 500#1e3
-GALAXEA_R1_HIGH_PD_GRIPPER_CFG.actuators["r1_grippers"].damping = 200#1e2
+GALAXEA_R1_HIGH_PD_GRIPPER_CFG.actuators["r1_grippers"].stiffness = 1e3#1e3
+GALAXEA_R1_HIGH_PD_GRIPPER_CFG.actuators["r1_grippers"].damping = 1e2#1e2
 
 
 GALAXEA_CAMERA_CFG = CameraCfg(

@@ -80,6 +80,10 @@ class R1MultiFruitEnv(DirectRLEnv):
             0, :, 1
         ].to(device=self.device)
 
+        # add action smoothing############################################################################
+        self.last_action = None
+        self.smooth_factor = 0.3
+
         # track goal reset state
         self.reset_goal_buf = torch.zeros(
             self.num_envs, dtype=torch.bool, device=self.device
@@ -127,11 +131,11 @@ class R1MultiFruitEnv(DirectRLEnv):
     def _setup_scene(self):
         self._object = [0]*4 
         self._robot = Articulation(self.cfg.robot_cfg)
-        self._drop_height = 0.96
+        self._drop_height = 0.26
         # add robot, object
 
         object1_cfg = copy.deepcopy(self.cfg.carrot_cfg)
-        object1_pos = (0.35, -0.35, self._drop_height)
+        object1_pos = (0.45, -0.35, self._drop_height)#x=0.35
         object1_cfg.init_state.pos = object1_pos
         object1_cfg.spawn.scale = (0.3, 0.3, 0.3)
         self._object[0] = RigidObject(object1_cfg)
@@ -152,8 +156,8 @@ class R1MultiFruitEnv(DirectRLEnv):
         self._object[2] = RigidObject(object3_cfg)
 
         basket_cfg = copy.deepcopy(self.cfg.basket_cfg)
-        new_pos = (0.45, 0.05, 1.05)
-        basket_cfg.spawn.scale = (0.4, 0.4, 0.4)
+        new_pos = (0.55, 0.05, 0.35)#x = 0.45
+        basket_cfg.spawn.scale = (0.3, 0.3, 0.3)
         basket_cfg.init_state.pos = new_pos
         basket_cfg.init_state.rot = (0.707, 0.0, 0.0, 0.707)
         prim_path = "/World/envs/env_.*/basket"
@@ -161,8 +165,8 @@ class R1MultiFruitEnv(DirectRLEnv):
         self._object[3] = RigidObject(basket_cfg)
 
         # add table which is a static object
-        if self.cfg.table_cfg.spawn is not None:
-            self.cfg.table_cfg.spawn.scale = (0.09, 0.09, 0.09)
+        if self.cfg.table_cfg.spawn is not None:                                                                                                                                                                                                                                                      
+            self.cfg.table_cfg.spawn.scale = (0.09, 0.09, 0.015)
             self.cfg.table_cfg.spawn.func(
                 self.cfg.table_cfg.prim_path,
                 self.cfg.table_cfg.spawn,
@@ -435,6 +439,12 @@ class R1MultiFruitEnv(DirectRLEnv):
         # right_arm: 6 joints
         # right_gripper: 2 joints
         # gripper_state: open: 1, close: -1
+
+        if self.last_action is not None:
+            # 应用动作平滑处理
+            actions = self.smooth_factor * actions + (1 - self.smooth_factor) * self.last_action
+        self.last_action = actions.clone()
+
         self.actions = actions.clone()
 
         if self.action_type == "joint_position":
@@ -652,10 +662,13 @@ class R1MultiFruitEnv(DirectRLEnv):
 
         # create left/right arm scene entity cfg
         self.left_arm_entity_cfg = SceneEntityCfg(
-            "robot", joint_names=["left_arm_.*"], body_names=["left_arm_link6"]
+            # "robot", joint_names=["left_arm_.*"], body_names=["left_arm_link6"]
+            "robot", joint_names=["left_Link_.*"], body_names=["left_Link_f"]
         )
         self.right_arm_entity_cfg = SceneEntityCfg(
-            "robot", joint_names=["right_arm_.*"], body_names=["right_arm_link6"]
+            # "robot", joint_names=["right_arm_.*"], body_names=["right_arm_link6"]
+            "robot", joint_names=["right_Link_.*"], body_names=["right_Link_f"]
+
         )
         self.left_arm_entity_cfg.resolve(self.scene)
         self.right_arm_entity_cfg.resolve(self.scene)
@@ -692,10 +705,10 @@ class R1MultiFruitEnv(DirectRLEnv):
 
         # build left/right gripper entity cfg
         self.left_gripper_entity_cfg = SceneEntityCfg(
-            "robot", joint_names=["left_gripper_.*"]
+            "robot", joint_names=["left_Link_[g-h]"]
         )
         self.right_gripper_entity_cfg = SceneEntityCfg(
-            "robot", joint_names=["right_gripper_.*"]
+            "robot", joint_names=["right_Link_[g-h]"]
         )
         self.left_gripper_entity_cfg.resolve(self.scene)
         self.right_gripper_entity_cfg.resolve(self.scene)

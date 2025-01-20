@@ -721,10 +721,11 @@ class R1LiftEnv(DirectRLEnv):
 
         # create left/right arm scene entity cfg
         self.left_arm_entity_cfg = SceneEntityCfg(
-            "robot", joint_names=["left_arm_.*"], body_names=["left_arm_link6"]
+            # "robot", joint_names=["left_arm_.*"], body_names=["left_arm_link6"]
+            "robot", joint_names=["left_Link_.*"], body_names=["left_Link_e"]
         )
         self.right_arm_entity_cfg = SceneEntityCfg(
-            "robot", joint_names=["right_arm_.*"], body_names=["right_arm_link6"]
+            "robot", joint_names=["right_Link_.*"], body_names=["right_Link_e"]
         )
         self.left_arm_entity_cfg.resolve(self.scene)
         self.right_arm_entity_cfg.resolve(self.scene)
@@ -761,10 +762,10 @@ class R1LiftEnv(DirectRLEnv):
 
         # build left/right gripper entity cfg
         self.left_gripper_entity_cfg = SceneEntityCfg(
-            "robot", joint_names=["left_gripper_.*"]
+            "robot", joint_names=["left_Link_[g-h]"]
         )
         self.right_gripper_entity_cfg = SceneEntityCfg(
-            "robot", joint_names=["right_gripper_.*"]
+            "robot", joint_names=["right_Link_[g-h]"]
         )
         self.left_gripper_entity_cfg.resolve(self.scene)
         self.right_gripper_entity_cfg.resolve(self.scene)

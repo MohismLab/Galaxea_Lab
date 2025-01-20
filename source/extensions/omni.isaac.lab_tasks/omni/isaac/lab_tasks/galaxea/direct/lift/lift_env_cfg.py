@@ -75,7 +75,7 @@ class R1LiftEnvCfg(DirectRLEnvCfg):
 
     # robot
     robot_cfg: ArticulationCfg = GALAXEA_R1_HIGH_PD_CFG.replace(
-        prim_path="/World/envs/env_.*/Robot"
+        prim_path="/js_urdf"
     )
 
     # eef frame
@@ -83,12 +83,14 @@ class R1LiftEnvCfg(DirectRLEnvCfg):
     left_ee_marker_cfg.markers["frame"].scale = (0.1, 0.1, 0.1)
     left_ee_marker_cfg.prim_path = "/Visuals/FrameTransformer/LeftEE"
     left_ee_frame_cfg: FrameTransformerCfg = FrameTransformerCfg(
-        prim_path="/World/envs/env_.*/Robot/base_link",
+        # prim_path="/World/envs/env_.*/Robot/base_link",
+        prim_path="/js_urdf/base_link",
         debug_vis=debug_vis,
         visualizer_cfg=left_ee_marker_cfg,
         target_frames=[
             FrameTransformerCfg.FrameCfg(
-                prim_path="/World/envs/env_.*/Robot/left_arm_link6",
+                # prim_path="/World/envs/env_.*/Robot/left_arm_link6",
+                prim_path="/js_urdf/left_Link_f",
                 name="left_ee",
                 offset=OffsetCfg(
                     pos=(0.0, 0.0, 0.15),  # offset from the link6 to the gripper tip
@@ -101,12 +103,14 @@ class R1LiftEnvCfg(DirectRLEnvCfg):
     right_ee_marker_cfg.markers["frame"].scale = (0.1, 0.1, 0.1)
     right_ee_marker_cfg.prim_path = "/Visuals/FrameTransformer/RightEE"
     right_ee_frame_cfg: FrameTransformerCfg = FrameTransformerCfg(
-        prim_path="/World/envs/env_.*/Robot/base_link",
+        # prim_path="/World/envs/env_.*/Robot/base_link",
+        prim_path="/js_urdf/base_link",
         debug_vis=debug_vis,
         visualizer_cfg=right_ee_marker_cfg,
         target_frames=[
             FrameTransformerCfg.FrameCfg(
-                prim_path="/World/envs/env_.*/Robot/right_arm_link6",
+                # prim_path="/World/envs/env_.*/Robot/right_arm_link6",
+                prim_path="/js_urdf/right_Link_f",
                 name="right_ee",
                 offset=OffsetCfg(
                     pos=(0.0, 0.0, 0.15),  # offset from the link6 to the gripper tip
@@ -117,7 +121,8 @@ class R1LiftEnvCfg(DirectRLEnvCfg):
 
     # camera
     front_camera_cfg: CameraCfg = GALAXEA_CAMERA_CFG.replace(
-        prim_path="/World/envs/env_.*/Robot/torso_link4/front_camera",
+        # prim_path="/World/envs/env_.*/Robot/torso_link4/front_camera",
+        prim_path="/js_urdf/head_Link_a/front_camera",
         height=240,
         width=320,
         offset=CameraCfg.OffsetCfg(
@@ -128,7 +133,7 @@ class R1LiftEnvCfg(DirectRLEnvCfg):
     )
 
     left_wrist_camera_cfg: CameraCfg = GALAXEA_CAMERA_CFG.replace(
-        prim_path="/World/envs/env_.*/Robot/left_arm_link6/left_wrist_camera",
+        prim_path="/js_urdf/left_Link_f/left_wrist_camera",
         height=240,
         width=320,
         offset=CameraCfg.OffsetCfg(
@@ -138,7 +143,7 @@ class R1LiftEnvCfg(DirectRLEnvCfg):
         ),
     )
     right_wrist_camera_cfg: CameraCfg = left_wrist_camera_cfg.replace(
-        prim_path="/World/envs/env_.*/Robot/right_arm_link6/right_wrist_camera",
+        prim_path="/js_urdf/right_Link_f/right_wrist_camera",
     )
 
     # visualization markers
@@ -190,7 +195,8 @@ class R1LiftBinAbsEnvCfg(R1LiftBinEnvCfg):
     num_actions = 16  # (7+1)*2, 7 for ee pose, 1 for gripper, two arms
     action_type = "ik_abs"
     robot_cfg: ArticulationCfg = GALAXEA_R1_HIGH_PD_GRIPPER_CFG.replace(
-        prim_path="/World/envs/env_.*/Robot"
+        # prim_path="/World/envs/env_.*/Robot"
+        prim_path="/js_urdf"
     )
 
 
@@ -200,7 +206,8 @@ class R1LiftBinRelEnvCfg(R1LiftBinEnvCfg):
     num_actions = 14  # (6+1)*2, 6 for delta ee pose, 1 for gripper, two arms
     action_type = "ik_rel"
     robot_cfg: ArticulationCfg = GALAXEA_R1_HIGH_PD_GRIPPER_CFG.replace(
-        prim_path="/World/envs/env_.*/Robot"
+        # prim_path="/World/envs/env_.*/Robot"
+        prim_path="/js_urdf"
     )
 
 
